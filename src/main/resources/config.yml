@@ -1,0 +1,4 @@
+#Amount used when isn't specified in command
+Default-Amount: 64
+#Duration in seconds used when isn't specified in command
+Default-Duration: 20

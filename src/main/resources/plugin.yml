@@ -1,0 +1,9 @@
+name: CustomGapple
+version: ${project.version}
+main: io.github.nik2143.customgapple.CustomGapple
+prefix: CustomGapple
+authors: [nik2143]
+description: Allow to create and use custom golden apples with custom effects
+commands:
+  customgapple:
+    description: Command to give yourself a golden apple with custom effect

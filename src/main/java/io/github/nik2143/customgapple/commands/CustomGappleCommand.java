@@ -4,7 +4,6 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.nik2143.customgapple.CustomGapple;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +19,7 @@ import java.util.List;
 
 public class CustomGappleCommand implements CommandExecutor, TabCompleter {
 
-    private CustomGapple plugin;
+    private final CustomGapple plugin;
 
     public CustomGappleCommand (CustomGapple plugin){
         this.plugin = plugin;
@@ -28,72 +27,76 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("customgapple")){
+        if (command.getName().equalsIgnoreCase("customgapple")) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage("[CustomGapple] You can't use this command from console");
                 return true;
             }
-            if (!sender.isOp() || !sender.hasPermission("customgapple.use")){
+            if (!sender.isOp() || !sender.hasPermission("customgapple.use")) {
                 sender.sendMessage("[CustomGapple] You haven't permissions to use this command");
                 return true;
             }
             Player player = (Player) sender;
-            switch (args.length){
+            switch (args.length) {
                 case 0:
-                    sender.sendMessage("Wrong sintax. Use /customgapple <Effect> [Duration] [Level] [Amount]");
+                    sender.sendMessage("Wrong sintax. Use /customgapple <EffectsNumbers> <Effects> [Level] [Duration] [Amount]");
                     return true;
                 case 1:
-                    if (PotionEffectType.getByName(args[0])==null){
-                        sender.sendMessage("Unknown potion effect");
+                    sender.sendMessage("Wrong sintax. Use /customgapple <EffectsNumber> <Effects> [Level] [Duration] [Amount]");
+                    return true;
+                default:
+                    if (!NumberUtils.isNumber(args[0])){
+                        sender.sendMessage(args[0] + " isn't a number");
                         return true;
                     }
-                    player.getInventory().addItem(CreateGapple(PotionEffectType.getByName(args[0]),plugin.getConfig().getInt("Default-Duration"),1, plugin.getConfig().getInt("Default-Amount")));
-                    break;
-                case 2:
-                    if (PotionEffectType.getByName(args[0])==null){
-                        sender.sendMessage("Unknown potion effect");
+                    List<PotionEffectType> effects = new ArrayList<>();
+                    List<Integer> levels = new ArrayList<>();
+                    int effectsnumber = Integer.parseInt(args[0]);
+                    if (args.length < effectsnumber+1) {
+                        sender.sendMessage("The number of effects is wrong");
                         return true;
                     }
-                    if (!NumberUtils.isNumber(args[1])){
-                        sender.sendMessage(args[1] + " isn't a number");
-                        return true;
+                    for (int i = 0; i < effectsnumber; i++){
+                        if (PotionEffectType.getByName(args[i+1])!=null){
+                            effects.add(PotionEffectType.getByName(args[i+1]));
+                        } else {
+                            sender.sendMessage("Effect " + args[i+1] + " doesn't exist");
+                            return true;
+                        }
                     }
-                    player.getInventory().addItem(CreateGapple(PotionEffectType.getByName(args[0]), Integer.parseInt(args[1]),1, plugin.getConfig().getInt("Default-Amount")));
-                    break;
-                case 3:
-                    if (PotionEffectType.getByName(args[0])==null){
-                        sender.sendMessage("Unknown potion effect");
-                        return true;
+                    if (args.length >= effectsnumber * 2 + 1) {
+                        for (int i = 0; i < effectsnumber; i++){
+                            if (NumberUtils.isNumber(args[i+effectsnumber+1])){
+                                levels.add(Integer.valueOf(args[i+effectsnumber+1]));
+                            } else {
+                                sender.sendMessage(args[i+effectsnumber+1] + " isn't a number");
+                                return true;
+                            }
+                        }
+                    }else {
+                        Collections.addAll(levels, 1, 1, 1);
                     }
-                    if (!NumberUtils.isNumber(args[1])){
-                        sender.sendMessage(args[1] + " isn't a number");
-                        return true;
+                    if (args.length >= effectsnumber * 2 + 3){
+                        if (!NumberUtils.isNumber(args[effectsnumber * 2 + 2])){
+                            sender.sendMessage(args[effectsnumber * 2 + 2] + " isn't a number");
+                            return true;
+                        }
+                        if (NumberUtils.isNumber(args[effectsnumber * 2 + 1])){
+                            player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, Integer.parseInt(args[effectsnumber * 2 + 1]), Integer.parseInt(args[effectsnumber * 2 + 2])));
+                        } else {
+                            sender.sendMessage(args[effectsnumber * 2 + 1] + " isn't a number");
+                            return true;
+                        }
+                    } else if (args.length >= effectsnumber * 2 + 2){
+                        if (NumberUtils.isNumber(args[effectsnumber * 2 + 1])){
+                            player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, Integer.parseInt(args[effectsnumber * 2 + 1]), plugin.getConfig().getInt("Default-Amount")));
+                        } else {
+                            sender.sendMessage(args[effectsnumber * 2 + 1] + " isn't a number");
+                            return true;
+                        }
+                    } else {
+                        player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, plugin.getConfig().getInt("Default-Duration"), plugin.getConfig().getInt("Default-Amount")));
                     }
-                    if (!NumberUtils.isNumber(args[2])){
-                        sender.sendMessage(args[2] + " isn't a number");
-                        return true;
-                    }
-                    player.getInventory().addItem(CreateGapple(PotionEffectType.getByName(args[0]), Integer.parseInt(args[1]),Integer.parseInt(args[2]), plugin.getConfig().getInt("Default-Amount")));
-                    break;
-                case 4:
-                    if (PotionEffectType.getByName(args[0])==null){
-                        sender.sendMessage("Unknown potion effect");
-                        return true;
-                    }
-                    if (!NumberUtils.isNumber(args[1])){
-                        sender.sendMessage(args[1] + " isn't a number");
-                        return true;
-                    }
-                    if (!NumberUtils.isNumber(args[2])){
-                        sender.sendMessage(args[2] + " isn't a number");
-                        return true;
-                    }
-                    if (!NumberUtils.isNumber(args[3])){
-                        sender.sendMessage(args[3] + " isn't a number");
-                        return true;
-                    }
-                    player.getInventory().addItem(CreateGapple(PotionEffectType.getByName(args[0]), Integer.parseInt(args[1]),Integer.parseInt(args[2]),Integer.parseInt(args[3])));
-                    break;
             }
             return true;
         }
@@ -103,8 +106,8 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("customgapple")){
-            List<String> autocomplete = new ArrayList<String>();
-            if (args.length == 1){
+            List<String> autocomplete = new ArrayList<>();
+            if (args.length > 1 && NumberUtils.isNumber(args[0]) && args.length < Integer.parseInt(args[0]) + 2){
                 for (PotionEffectType effect : PotionEffectType.values()){
                     if(effect == null) {
                         continue;
@@ -118,12 +121,15 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
         return Collections.emptyList();
     }
 
-    private ItemStack CreateGapple (PotionEffectType effect,int duration,int level,int amount){
+    private ItemStack CreateGapple (int effectsnumber, List<PotionEffectType> effects, List<Integer> level, int duration, int amount){
         NBTItem nbti = new NBTItem(new ItemStack(Material.GOLDEN_APPLE, amount));
-        nbti.addCompound("GappleEffect");
-        nbti.getCompound("GappleEffect").setString("Effect", effect.getName());
-        nbti.getCompound("GappleEffect").setInteger("Duration",duration * 20);
-        nbti.getCompound("GappleEffect").setInteger("Level",level - 1);
+        nbti.addCompound("GappleEffects");
+        for (int i = 0;i<effectsnumber;i++){
+            nbti.getCompound("GappleEffects").addCompound("Effect"+i);
+            nbti.getCompound("GappleEffects").getCompound("Effect"+i).setString("Effect", effects.get(i).getName());
+            nbti.getCompound("GappleEffects").getCompound("Effect"+i).setInteger("Duration",duration * 20);
+            nbti.getCompound("GappleEffects").getCompound("Effect"+i).setInteger("Level",level.get(i) - 1);
+        }
         return nbti.getItem();
     }
 }

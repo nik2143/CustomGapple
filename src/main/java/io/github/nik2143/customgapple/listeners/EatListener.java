@@ -1,6 +1,7 @@
 package io.github.nik2143.customgapple.listeners;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,11 +17,13 @@ public class EatListener implements Listener {
         if (e.getItem().getType().equals(Material.GOLDEN_APPLE)){
             ItemStack item = e.getItem();
             NBTItem nbti = new NBTItem(item);
-            if (nbti.getCompound("GappleEffect") != null){
+            if (nbti.getCompound("GappleEffects") != null){
                 e.setCancelled(true);
-                e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.getByName(nbti.getCompound("GappleEffect").getString("Effect")),
-                        nbti.getCompound("GappleEffect").getInteger("Duration"),
-                        nbti.getCompound("GappleEffect").getInteger("Level")));
+                for(String key : nbti.getCompound("GappleEffects").getKeys()){
+                    e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.getByName(nbti.getCompound("GappleEffects").getCompound(key).getString("Effect")),
+                            nbti.getCompound("GappleEffects").getCompound(key).getInteger("Duration"),
+                            nbti.getCompound("GappleEffects").getCompound(key).getInteger("Level")),true);
+                }
                 item.setAmount(item.getAmount() - 1);
                 e.getPlayer().getInventory().setItemInHand(item);
             }

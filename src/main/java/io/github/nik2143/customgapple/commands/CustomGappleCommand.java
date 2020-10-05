@@ -39,10 +39,10 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
             Player player = (Player) sender;
             switch (args.length) {
                 case 0:
-                    sender.sendMessage("Wrong sintax. Use /customgapple <EffectsNumbers> <Effects> [Level] [Duration] [Amount]");
+                    sender.sendMessage("Wrong sintax. Use /customgapple <EffectsNumbers> <Effects> [Levels] [Durations] [Amount] [Enchanted (true/false)]");
                     return true;
                 case 1:
-                    sender.sendMessage("Wrong sintax. Use /customgapple <EffectsNumber> <Effects> [Level] [Duration] [Amount]");
+                    sender.sendMessage("Wrong sintax. Use /customgapple <EffectsNumber> <Effects> [Levels] [Durations] [Amount] [Enchanted (true/false)]");
                     return true;
                 default:
                     if (!NumberUtils.isNumber(args[0])){
@@ -51,6 +51,8 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
                     }
                     List<PotionEffectType> effects = new ArrayList<>();
                     List<Integer> levels = new ArrayList<>();
+                    List<Integer> durations = new ArrayList<>();
+                    boolean enchantedGapple = false;
                     int effectsnumber = Integer.parseInt(args[0]);
                     if (args.length < effectsnumber+1) {
                         sender.sendMessage("The number of effects is wrong");
@@ -74,28 +76,35 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
                             }
                         }
                     }else {
-                        Collections.addAll(levels, 1, 1, 1);
+                        for (int i = 0; i<effectsnumber;i++){
+                            levels.add(1);
+                        }
                     }
-                    if (args.length >= effectsnumber * 2 + 3){
-                        if (!NumberUtils.isNumber(args[effectsnumber * 2 + 2])){
-                            sender.sendMessage(args[effectsnumber * 2 + 2] + " isn't a number");
+                    if (args.length >= effectsnumber * 3 + 1){
+                        for (int i = 0; i < effectsnumber; i++){
+                            if (NumberUtils.isNumber(args[i+effectsnumber*2+1])){
+                                durations.add(Integer.valueOf(args[i+effectsnumber*2+1]));
+                            } else {
+                                sender.sendMessage(args[i+effectsnumber+1] + " isn't a number");
+                                return true;
+                            }
+                        }
+                    }else {
+                        for (int i = 0; i < effectsnumber; i++){
+                            durations.add(plugin.getConfig().getInt("Default-Duration"));
+                        }
+                    }
+                    if  (args.length >= effectsnumber * 3 + 3){
+                        enchantedGapple = Boolean.parseBoolean(args[effectsnumber * 3 + 2]);
+                    }
+                    if (args.length >= effectsnumber * 3 + 2){
+                        if (!NumberUtils.isNumber(args[effectsnumber * 3 + 1])){
+                            sender.sendMessage(args[effectsnumber * 3 + 1] + " isn't a number");
                             return true;
                         }
-                        if (NumberUtils.isNumber(args[effectsnumber * 2 + 1])){
-                            player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, Integer.parseInt(args[effectsnumber * 2 + 1]), Integer.parseInt(args[effectsnumber * 2 + 2])));
-                        } else {
-                            sender.sendMessage(args[effectsnumber * 2 + 1] + " isn't a number");
-                            return true;
-                        }
-                    } else if (args.length >= effectsnumber * 2 + 2){
-                        if (NumberUtils.isNumber(args[effectsnumber * 2 + 1])){
-                            player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, Integer.parseInt(args[effectsnumber * 2 + 1]), plugin.getConfig().getInt("Default-Amount")));
-                        } else {
-                            sender.sendMessage(args[effectsnumber * 2 + 1] + " isn't a number");
-                            return true;
-                        }
+                        player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, durations, Integer.parseInt(args[effectsnumber * 3 + 1 ]),enchantedGapple));
                     } else {
-                        player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, plugin.getConfig().getInt("Default-Duration"), plugin.getConfig().getInt("Default-Amount")));
+                        player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, durations, plugin.getConfig().getInt("Default-Amount"),enchantedGapple));
                     }
             }
             return true;
@@ -121,13 +130,13 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
         return Collections.emptyList();
     }
 
-    private ItemStack CreateGapple (int effectsnumber, List<PotionEffectType> effects, List<Integer> level, int duration, int amount){
-        NBTItem nbti = new NBTItem(new ItemStack(Material.GOLDEN_APPLE, amount));
+    private ItemStack CreateGapple (int effectsnumber, List<PotionEffectType> effects, List<Integer> level, List<Integer> duration, int amount, boolean enchantedGapple){
+        NBTItem nbti = new NBTItem(new ItemStack(Material.GOLDEN_APPLE, amount, enchantedGapple ? (short) 1 : (short) 0));
         nbti.addCompound("GappleEffects");
         for (int i = 0;i<effectsnumber;i++){
             nbti.getCompound("GappleEffects").addCompound("Effect"+i);
             nbti.getCompound("GappleEffects").getCompound("Effect"+i).setString("Effect", effects.get(i).getName());
-            nbti.getCompound("GappleEffects").getCompound("Effect"+i).setInteger("Duration",duration * 20);
+            nbti.getCompound("GappleEffects").getCompound("Effect"+i).setInteger("Duration",duration.get(i) * 20);
             nbti.getCompound("GappleEffects").getCompound("Effect"+i).setInteger("Level",level.get(i) - 1);
         }
         return nbti.getItem();

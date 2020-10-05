@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class EatListener implements Listener {
+public class EatGappleListener implements Listener {
 
     @EventHandler
     private void GappleEatEvent(PlayerItemConsumeEvent e){

@@ -43,6 +43,7 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
                     args = argslist.toArray(new String[argslist.size()]);
                 } else {
                     sender.sendMessage("Player "+ args[0] +" isn't online");
+                    return true;
                 }
             } else {
                 if (args.length == 0 || args.length == 1){

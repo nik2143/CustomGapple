@@ -25,6 +25,8 @@ public class EatGappleListener implements Listener {
                             nbti.getCompound("GappleEffects").getCompound(key).getInteger("Level")),true);
                 }
                 item.setAmount(item.getAmount() - 1);
+                e.getPlayer().setFoodLevel(e.getPlayer().getFoodLevel()+4);
+                e.getPlayer().setSaturation((float) (e.getPlayer().getSaturation()+1.2));
                 e.getPlayer().getInventory().setItemInHand(item);
             }
         }

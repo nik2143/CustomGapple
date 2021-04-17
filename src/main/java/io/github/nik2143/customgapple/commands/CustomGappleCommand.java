@@ -21,16 +21,10 @@ import java.util.List;
 
 public class CustomGappleCommand implements CommandExecutor, TabCompleter {
 
-    private final CustomGapple plugin;
-
-    public CustomGappleCommand (CustomGapple plugin){
-        this.plugin = plugin;
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("customgapple")) {
-            Player player = null;
+            Player player;
             if (!(sender instanceof Player)) {
                 if (args.length == 0 || args.length == 1 || args.length == 2){
                     sender.sendMessage("Wrong sintax. Use /customgapple <Player> <EffectsNumbers> <Effects> [Levels] [Durations] [Amount] [Enchanted (true/false)]");
@@ -40,7 +34,7 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
                     player = Bukkit.getPlayerExact(args[0]);
                     ArrayList<String> argslist = new ArrayList<>(Arrays.asList(args));
                     argslist.remove(0);
-                    args = argslist.toArray(new String[argslist.size()]);
+                    args = argslist.toArray(new String[0]);
                 } else {
                     sender.sendMessage("Player "+ args[0] +" isn't online");
                     return true;
@@ -102,7 +96,7 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
                 }
             }else {
                 for (int i = 0; i < effectsnumber; i++){
-                    durations.add(plugin.getConfig().getInt("Default-Duration"));
+                    durations.add(CustomGapple.getCustomGapple().getConfiguration().defaultDuration);
                 }
             }
             if  (args.length >= effectsnumber * 3 + 3){
@@ -115,7 +109,7 @@ public class CustomGappleCommand implements CommandExecutor, TabCompleter {
                 }
                 player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, durations, Integer.parseInt(args[effectsnumber * 3 + 1 ]),enchantedGapple));
             } else {
-                player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, durations, plugin.getConfig().getInt("Default-Amount"),enchantedGapple));
+                player.getInventory().addItem(CreateGapple(effectsnumber, effects, levels, durations, CustomGapple.getCustomGapple().getConfiguration().defaultAmount,enchantedGapple));
             }
             return true;
         }

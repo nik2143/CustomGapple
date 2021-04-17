@@ -2,3 +2,5 @@
 Default-Amount: 64
 #Duration in seconds used when isn't specified in command
 Default-Duration: 20
+#Apply only effects better than the effects that has the player
+apply-only-better: false

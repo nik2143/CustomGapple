@@ -7,11 +7,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class CustomGapple extends JavaPlugin {
 
+    private Configuration configuration;
+    private static CustomGapple customGapple;
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        this.getCommand("customgapple").setExecutor(new CustomGappleCommand(this));
-        this.getCommand("customgapple").setTabCompleter(new CustomGappleCommand(this));
+        customGapple = this;
+        configuration = new Configuration();
+        getCommand("customgapple").setExecutor(new CustomGappleCommand());
+        getCommand("customgapple").setTabCompleter(new CustomGappleCommand());
         Bukkit.getPluginManager().registerEvents(new EatGappleListener(),this);
     }
+
+    public Configuration getConfiguration() { return configuration; }
+
+    public static CustomGapple getCustomGapple() { return customGapple; }
 }

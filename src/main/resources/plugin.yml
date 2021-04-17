@@ -2,6 +2,7 @@ name: CustomGapple
 version: ${project.version}
 main: io.github.nik2143.customgapple.CustomGapple
 prefix: CustomGapple
+api-version: 1.13
 authors: [nik2143]
 description: Allow to create and use custom golden apples with custom effects
 commands:

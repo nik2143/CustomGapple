@@ -6,7 +6,7 @@
 
     <groupId>io.github.nik2143</groupId>
     <artifactId>CustomGapple</artifactId>
-    <version>1.2.2</version>
+    <version>2.0</version>
     <packaging>jar</packaging>
 
     <name>CustomGapple</name>
@@ -40,10 +40,27 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <minimizeJar>true</minimizeJar>
                             <relocations>
                                 <relocation>
                                     <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                                    <shadedPattern>io.github.nik2143.customgapple</shadedPattern>
+                                    <shadedPattern>io.github.nik2143.customgapple.deps.nbtapi</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>fr.minuskube.inv</pattern>
+                                    <shadedPattern>io.github.nik2143.customgapple.deps.smartinvs</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>de.jeff_media.updatechecker</pattern>
+                                    <shadedPattern>io.github.nik2143.customgapple.deps.updatechecker</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>io.github.nik2143.customgapple.deps.xseries</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>io.github.nik2143.customgapple.deps.bstats</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -54,6 +71,12 @@
                                         <exclude>LICENSE</exclude>
                                         <exclude>META-INF/maven/de.tr7zw/functional-annotations/pom.properties</exclude>
                                         <exclude>META-INF/maven/de.tr7zw/functional-annotations/pom.xml</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.github.MinusKube:SmartInvs</artifact>
+                                    <excludes>
+                                        <exclude>plugin.yml</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -84,19 +107,57 @@
             <url>https://repo.codemc.org/repository/maven-public/</url>
             <layout>default</layout>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>jeff-media-gbr</id>
+            <url>https://repo.jeff-media.de/maven2/</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.17-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api</artifactId>
-            <version>2.7.1</version>
+            <version>2.8.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>8.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MinusKube</groupId>
+            <artifactId>SmartInvs</artifactId>
+            <version>master</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jeff_media</groupId>
+            <artifactId>SpigotUpdateChecker</artifactId>
+            <version>1.2.5</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

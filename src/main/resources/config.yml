@@ -4,3 +4,5 @@ Default-Amount: 64
 Default-Duration: 20
 #Apply only effects better than the effects that has the player
 apply-only-better: false
+#No Permissions Message
+nopermsmsg: "&cYou haven't permissions to use this command"

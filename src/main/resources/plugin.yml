@@ -5,6 +5,3 @@ prefix: CustomGapple
 api-version: 1.13
 authors: [nik2143]
 description: Allow to create and use custom golden apples with custom effects
-commands:
-  customgapple:
-    description: Command to give yourself a golden apple with custom effects
